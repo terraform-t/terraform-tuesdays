@@ -18,7 +18,52 @@ Admittedly, that's a lot of stuff for a pipeline, but we don't have to do everyt
 
 ## Setup
 
-Before I set up the pipeline, I'm going to need an Azure Storage Account and Azure Key Vault. I'm also going to need to configure the pipeline with access to the Key Vault. Not sure if I can do that through Terraform or if I'll need to do it after the fact. Within ADO, I'm going to need a project for the pipeline to live in, and that project will need to be wired to a GitHub repo where my code is stored. Not sure if I can do any of that with Terraform, but I'll check it out. The results will be in the setup folder in this directory.
+Before I set up the pipeline,
+
+I'm going to need an Azure Storage Account and Azure Key Vault. 
+
+I'm also going to need to configure the pipeline with access to the Key Vault. 
+
+Not sure if I can do that through Terraform or if I'll need to do it after the fact. 
+
+Within ADO, I'm going to need a project for the pipeline to live in, 
+
+and that project will need to be wired to a GitHub repo where my code is stored. 
+
+Not sure if I can do any of that with Terraform, but I'll check it out. 
+
+The results will be in the setup folder in this directory.
+
+    az storage account keys list -g azurek8stest -n terraformstatestoacc
+        {
+            "creationTime": "2022-03-14T11:38:09.134827+00:00",
+            "keyName": "key1",
+            "permissions": "FULL",
+            "value": "vNAlH3kV6xp62aPz4vdPuD1Ba3LV30+F5nOIcx0ipBZCb32m59QWLUmEbSly4FwS/L8NJFfJmPZBXetwlSkNjA=="
+        },
+        blob sas token: 
+            sp=rw&st=2022-04-11T19:40:55Z&se=2023-04-12T03:40:55Z&sv=2020-08-04&sr=c&sig=Xf%2B86I5E4PfmraTfBy40elXA7014EZbWmiu6VBXwnu8%3D
+        sas sas url:
+            https://terraformstatestoacc.blob.core.windows.net/terraform-state?sp=rw&st=2022-04-11T19:40:55Z&se=2023-04-12T03:40:55Z&sv=2020-08-04&sr=c&sig=Xf%2B86I5E4PfmraTfBy40elXA7014EZbWmiu6VBXwnu8%3D
+
+
+    az ad sp create-for-rbac --name tftuesdays --role contributor --scopes /subscriptions/df762d06-9685-438e-aed0-d55b807198a7
+        {
+        "appId": "fe40b964-81a6-42f6-8f0e-e205c8c9a4b9",
+        "displayName": "tftuesdays",
+        "password": "cZFkJ83-hOsPGWLxlTLTELG37U2hhKvc-H",
+        "tenant": "b7540979-5063-4ba1-a9a0-49b436141ffb"
+        }
+    GIThub
+        Personal Access Token:
+        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
+    
+    azure DevOps
+        organization: ned-in-the-cloud
+        access token name: terraform-tuesdays
+            secret: ajgk4cvbzstghdrbw62nq6imd6v2lfwfl6ircgviu2nttasgooza
+
+    azure DevOps 
 
 *An indeterminate amount of time later*
 
@@ -61,3 +106,23 @@ The whole purpose behind phase one is to get the basic framework in place for an
 * Build pipeline
 
 The pipeline itself is deploying a simple Azure virtual network with two subnets. Nothing fancy. The stages validate the Terraform code, run a plan, wait for approval, and run an apply. That's it. The trigger is a commit to the 2021-05-11-ADO/vnet directory. That will change eventually.
+
+#generate sas token for container
+az storage container generate-sas \
+            --account-name "terraformstatestoacc" \
+            --account-key "vNAlH3kV6xp62aPz4vdPuD1Ba3LV30+F5nOIcx0ipBZCb32m59QWLUmEbSly4FwS/L8NJFfJmPZBXetwlSkNjA==" \
+            --name "terraform-state" \
+            --start $dstart \
+            --expiry $dend \
+            --permissions lr \
+            --output tsv
+
+        dstart=$(date +%Y-%m-%d)
+        dend=$(date -d "$dstart +1 year" +%Y-%m-%d)
+
+        st=2022-04-11&se=2023-04-11&sp=rl&sv=2021-04-10&sr=c&sig=rmkasHBiOKi0nGq5CEWM0TpikgPynBvUVzWQ4iZWl7I%3D
+
+Latest generated 
+        Blob SAS Token: sp=rwl&st=2022-04-11T02:51:21Z&se=2023-04-11T10:51:21Z&spr=https&sv=2020-08-04&sr=c&sig=TMVPOw59%2B21QjPrw2nzJRvgYFlndJciHRK%2BdAF70K%2BQ%3D
+
+        Blon SAS Url: https://terraformstatestoacc.blob.core.windows.net/terraform-state?sp=rwl&st=2022-04-11T02:51:21Z&se=2023-04-11T10:51:21Z&spr=https&sv=2020-08-04&sr=c&sig=TMVPOw59%2B21QjPrw2nzJRvgYFlndJciHRK%2BdAF70K%2BQ%3D
