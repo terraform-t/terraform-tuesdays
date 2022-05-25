@@ -34,7 +34,7 @@ stages:
         runAsPreJob: false # Azure DevOps Services only
     
     # Init
-    - task: TerraformCLI@0
+    - task: TerraformTaskV1@0
       displayName: Initialize Terraform
       env:
         ARM_SAS_TOKEN: $(sas-token)
@@ -45,7 +45,7 @@ stages:
         backendType: 'selfConfigured'
 
   # Validate
-    - task: TerraformCLI@0
+    - task: TerraformTaskV1@0
       displayName: Validate Config
       inputs:
         command: 'validate'
@@ -73,7 +73,7 @@ stages:
         runAsPreJob: false # Azure DevOps Services only
   
     # Init
-    - task: TerraformCLI@0
+    - task: TerraformTaskV1@0
       displayName: Initialize Terraform
       env:
         ARM_SAS_TOKEN: $(sas-token)
@@ -84,7 +84,7 @@ stages:
         backendType: 'selfConfigured'
 
   # Plan
-    - task: TerraformCLI@0
+    - task: TerraformTaskV1@0
       displayName: Plan Terraform Deployment
       env:
         ARM_SAS_TOKEN: $(sas-token)
@@ -107,7 +107,7 @@ stages:
     - task: ManualValidation@0
       timeoutInMinutes: 60
       inputs:
-        notifyUsers: 'ned@nedinthecloud.com'
+        notifyUsers: 'zoran.grubisic@gmail.com'
         instructions: 'Review the plan in the next hour'
 
 - stage: Apply
@@ -132,7 +132,7 @@ stages:
         runAsPreJob: false # Azure DevOps Services only
 
   # Init
-    - task: TerraformCLI@0
+    - task: TerraformTaskV1@0
       displayName: Initialize Terraform
       env:
         ARM_SAS_TOKEN: $(sas-token)
@@ -143,7 +143,7 @@ stages:
         backendType: 'selfConfigured'
 
   # Apply
-    - task: TerraformCLI@0
+    - task: TerraformTaskV1@0
       displayName: Apply Terraform Deployment
       env:
         ARM_SAS_TOKEN: $(sas-token)

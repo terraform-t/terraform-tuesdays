@@ -20,7 +20,7 @@ terraform {
   backend "remote" {
     organization = "my-ned-in-the-cloud"
     # token = "CVUuhNzSfBUQNA.atlasv1.sIR3nbqSA2gHXyahn7If7KFPlAQ5Vma41ecF8QZ5yrDK5o95fJAYlyhGwTVvFHyavz8"
-    # token = "TZzNlUFsS0cpJA.atlasv1.sn7qK2hagJuKjWzISLQneg2zPVz0qFaq62zBBUJ8IHzKF27wjpEUcShFcdWUxKCLxzU"
+    # token = "TZzNlUFsS0cpJA.ado_github_patatlasv1.sn7qK2hagJuKjWzISLQneg2zPVz0qFaq62zBBUJ8IHzKF27wjpEUcShFcdWUxKCLxzU"
     # terraform-tuesdays-token
     # TZzNlUFsS0cpJA.atlasv1.sn7qK2hagJuKjWzISLQneg2zPVz0qFaq62zBBUJ8IHzKF27wjpEUcShFcdWUxKCLxzU
 
